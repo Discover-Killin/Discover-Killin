@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Killin Directory</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap');
+
+  :root{
+    --loch:#1F3A4D;
+    --loch-deep:#132630;
+    --heather:#7C6A93;
+    --moss:#4F6650;
+    --gorse:#D9A441;
+    --parchment:#F2ECDF;
+    --stone:#E4DCC9;
+    --ink:#241F18;
+    --ink-soft:#5B5646;
+    --card:#FFFDF8;
+    --radius:4px;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--parchment);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- Header / hero ---------- */
+  header{
+    background:
+      linear-gradient(180deg, rgba(19,38,48,0.75) 0%, rgba(31,58,77,0.75) 100%),
+      url("panorama.jpg") center/cover no-repeat;
+    color:var(--parchment);
+    padding:52px 24px 84px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-inner{
+    max-width:960px;
+    margin:0 auto;
+    position:relative;
+    z-index:2;
+  }
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--gorse);
+    font-weight:600;
+    margin-bottom:10px;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:clamp(34px, 6vw, 58px);
+    line-height:1.02;
+    margin:0 0 12px;
+    letter-spacing:-0.01em;
+  }
+  .hero-tagline{
+    font-size:16px;
+    color:#D6DEE3;
+    max-width:520px;
+    margin:0 0 34px;
+    line-height:1.5;
+  }
+
+  /* stylised falls / ridge line, signature element */
+  .ridge{
+    position:absolute;
+    left:0; right:0; bottom:-2px;
+    height:70px;
+    z-index:1;
+  }
+
+  /* ---------- Search ---------- */
+  .search-wrap{
+    position:relative;
+    max-width:560px;
+  }
+  .search-wrap input{
+    width:100%;
+    padding:15px 20px 15px 46px;
+    font-size:16px;
+    font-family:'Work Sans', sans-serif;
+    border:none;
+    border-radius:2px;
+    background:rgba(255,255,255,0.96);
+    color:var(--ink);
+    outline:none;
+    box-shadow:0 6px 20px rgba(0,0,0,0.25);
+  }
+  .search-wrap input::placeholder{color:#8b8676;}
+  .search-wrap svg{
+    position:absolute;
+    left:16px; top:50%;
+    transform:translateY(-50%);
+    width:18px; height:18px;
+    stroke:#8b8676;
+  }
+
+  /* ---------- Filter chips ---------- */
+  .chips-wrap{
+    max-width:960px;
+    margin:0 auto;
+    padding:26px 24px 8px;
+  }
+  .chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .chip{
+    border:1.5px solid var(--stone);
+    background:var(--card);
+    color:var(--ink-soft);
+    font-family:'Work Sans', sans-serif;
+    font-size:13.5px;
+    font-weight:500;
+    padding:8px 16px;
+    border-radius:20px;
+    cursor:pointer;
+    transition:all .15s ease;
+    white-space:nowrap;
+  }
+  .chip:hover{border-color:var(--heather);}
+  .chip.active{
+    background:var(--loch);
+    border-color:var(--loch);
+    color:#fff;
+  }
+  .count-label{
+    max-width:960px;
+    margin:0 auto;
+    padding:16px 24px 0;
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+
+  /* ---------- Grid ---------- */
+  main{
+    max-width:960px;
+    margin:0 auto;
+    padding:16px 24px 60px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(270px, 1fr));
+    gap:16px;
+    margin-top:16px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--stone);
+    border-radius:var(--radius);
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 24px rgba(31,58,77,0.12);
+  }
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .badge{
+    font-size:10.5px;
+    font-weight:600;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    padding:3px 9px;
+    border-radius:20px;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .card h3{
+    font-family:'Fraunces', serif;
+    font-size:19px;
+    font-weight:600;
+    margin:0;
+    line-height:1.25;
+  }
+  .card p{
+    font-size:14px;
+    color:var(--ink-soft);
+    line-height:1.5;
+    margin:0;
+    flex-grow:1;
+  }
+  .date-tag{
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--moss);
+  }
+  .card a.visit{
+    margin-top:6px;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--loch);
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+  }
+  .card a.visit:hover{text-decoration:underline;}
+
+  .empty-state{
+    text-align:center;
+    padding:70px 20px;
+    color:var(--ink-soft);
+  }
+  .empty-state h3{
+    font-family:'Fraunces', serif;
+    color:var(--ink);
+    margin-bottom:6px;
+  }
+
+  footer{
+    max-width:960px;
+    margin:0 auto;
+    padding:0 24px 50px;
+    font-size:13px;
+    color:var(--ink-soft);
+    line-height:1.6;
+    border-top:1px solid var(--stone);
+    padding-top:24px;
+  }
+  footer code{
+    background:var(--stone);
+    padding:1px 6px;
+    border-radius:3px;
+    font-size:12px;
+  }
+
+  @media (max-width:600px){
+    header{padding:40px 18px 70px;}
+    .chips-wrap, .count-label, main, footer{padding-left:18px; padding-right:18px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hero-inner">
+    <div class="eyebrow">Building community together</div>
+    <h1>The Killin Directory</h1>
+    <p class="hero-tagline">One place to find accommodation, things to do, places to eat, walking &amp; cycling routes, local services, heritage, and what's on — all around Killin.</p>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input id="searchInput" type="text" placeholder="Search the directory…" autocomplete="off">
+    </div>
+  </div>
+  <svg class="ridge" viewBox="0 0 1200 70" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,70 L0,40 Q60,10 130,32 T280,26 Q340,14 410,34 T560,30 Q640,8 720,30 T900,24 Q980,10 1050,30 T1200,26 L1200,70 Z" fill="#F2ECDF"></path>
+  </svg>
+</header>
+
+<div class="chips-wrap">
+  <div class="chips" id="chips"></div>
+</div>
+<div class="count-label" id="countLabel"></div>
+
+<main>
+  <div class="grid" id="grid"></div>
+  <div class="empty-state" id="emptyState" style="display:none;">
+    <h3>Nothing matches yet</h3>
+    <p>Try a different search term or category.</p>
+  </div>
+</main>
+
+<footer>
+  To add, edit, or remove a listing, update the <code>ENTRIES</code> array near the top of the script (name, category, description, and URL). Search, filtering, and layout update automatically.
+</footer>
+
+<script>
+  // ---------------------------------------------------------------
+  // Real Killin listings. "category" must exactly match one of the
+  // CATEGORIES below. Some links/descriptions are blank in the source
+  // list — link is "#" where none was supplied yet.
+  // ---------------------------------------------------------------
+  const CATEGORIES = [
+    "Accommodation",
+    "Things to Do",
+    "Eating Out",
+    "Shopping",
+    "Walking & Cycling",
+    "Services",
+    "Heritage",
+    "Events",
+    "Transport",
+    "Clubs"
+  ];
+
+  const ENTRIES = [
+    { name:"Killin Hotel", category:"Accommodation", description:"", link:"https://www.killinhotel.com/index.html" },
+    { name:"The Courie Inn", category:"Accommodation", description:"", link:"https://www.thecourieinn.com/" },
+    { name:"Ardeonaig Hotel", category:"Accommodation", description:"", link:"https://ardeonaighotel.co.uk/" },
+    { name:"Falls of Dochart Inn", category:"Accommodation", description:"", link:"https://www.fallsofdochart.co.uk/" },
+    { name:"Loch Tay Highland Lodges", category:"Accommodation", description:"", link:"https://lochtay-vacations.co.uk/" },
+    { name:"Breadalbane House", category:"Accommodation", description:"", link:"https://www.breadalbanehouse.com/" },
+    { name:"Dall Lodge Country House", category:"Accommodation", description:"", link:"https://www.dalllodge.co.uk/" },
+    { name:"Lochleven B&B", category:"Accommodation", description:"", link:"https://lochlevenkillin.com/" },
+
+    { name:"Fish On Scotland", category:"Things to Do", description:"", link:"https://fishonscotland.com/" },
+    { name:"Walk in the Park", category:"Things to Do", description:"", link:"https://www.pathsforall.org.uk/walking-for-health/health-walks/health-walk/walk-in-the-park-killin" },
+    { name:"Dewar's Aberfeldy Distillery", category:"Things to Do", description:"", link:"https://www.dewars.com/gl/en/aberfeldydistillery/" },
+    { name:"Splash Rafting", category:"Things to Do", description:"", link:"https://rafting.co.uk/" },
+    { name:"In Your Element", category:"Things to Do", description:"", link:"https://iye.scot/" },
+    { name:"Highland Safaris & Red Deer Centre", category:"Things to Do", description:"", link:"https://www.highlandsafaris.net/" },
+    { name:"Killin Clay Club", category:"Things to Do", description:"", link:"https://www.killin.org.uk/" },
+    { name:"Killin Pump Track", category:"Things to Do", description:"Free to use cycle track in Breadalbane Park.", link:"#" },
+    { name:"Killin Playpark", category:"Things to Do", description:"Situated in Breadalbane Park.", link:"#" },
+
+    { name:"Killin Hotel", category:"Eating Out", description:"", link:"https://www.killinhotel.com/index.html" },
+    { name:"The Courie Inn", category:"Eating Out", description:"", link:"https://www.thecourieinn.com/" },
+    { name:"Ardeonaig Hotel", category:"Eating Out", description:"", link:"https://ardeonaighotel.co.uk/" },
+    { name:"Falls of Dochart Inn", category:"Eating Out", description:"", link:"https://www.fallsofdochart.co.uk/" },
+    { name:"The River Inn", category:"Eating Out", description:"", link:"https://theriverinn.co.uk/" },
+    { name:"Secret Pizza Killin", category:"Eating Out", description:"", link:"https://thesecretkillin.co.uk/" },
+    { name:"Kula Coffee Shop", category:"Eating Out", description:"", link:"https://www.facebook.com/profile.php?id=61574113213991" },
+    { name:"Tay-Lawers Coffee", category:"Eating Out", description:"", link:"https://www.facebook.com/groups/355111971789151/user/61575130104659/" },
+    { name:"Dom's Pizza", category:"Eating Out", description:"", link:"#" },
+    { name:"Lochay Lounge", category:"Eating Out", description:"", link:"tel:+441567820312" },
+    { name:"The Boathouses Kitchen", category:"Eating Out", description:"", link:"https://lochtay-vacations.co.uk/site-facilities/restaurant" },
+
+    { name:"Killin Outdoor Centre and Mountain Shop", category:"Shopping", description:"", link:"http://www.killinoutdoor.co.uk/" },
+    { name:"Reuse Shop", category:"Shopping", description:"", link:"https://www.facebook.com/reuseshopkillin/" },
+    { name:"Macgregors Shop and Post Office", category:"Shopping", description:"", link:"https://www.facebook.com/MacGregorsShop/?locale=en_GB" },
+    { name:"The Old Mill", category:"Shopping", description:"", link:"https://www.facebook.com/OldMill.KAT/?locale=en_GB" },
+    { name:"Tombreck Market", category:"Shopping", description:"", link:"https://www.tombreck.co.uk/farm-shop" },
+    { name:"Falls of Dochart Smokehouse", category:"Shopping", description:"", link:"https://www.fallsofdochart.co.uk/" },
+    { name:"COOP Killin", category:"Shopping", description:"", link:"https://www.facebook.com/CoopFoodKillin/" },
+    { name:"Taigh Ceàirde", category:"Shopping", description:"Artist-run shop selling a variety of handmade Scottish artwork and craft from Scottish makers.", link:"https://www.facebook.com/groups/355111971789151/user/61591693495700/" },
+
+    { name:"Acharn Trails", category:"Walking & Cycling", description:"", link:"#" },
+    { name:"Head of the Loch", category:"Walking & Cycling", description:"", link:"#" },
+    { name:"Sron a Chlachain", category:"Walking & Cycling", description:"", link:"https://www.lochlomond-trossachs.org/things-to-do/walking/short-moderate-walks/sron-a-chlachain/" },
+
+    { name:"Killin Medical Practice", category:"Services", description:"", link:"https://www.killinmedicalpractice.scot.nhs.uk/" },
+    { name:"Killin Dental Practice", category:"Services", description:"", link:"https://www.infinitybludental.co.uk/killin/" },
+    { name:"Killin Nursery", category:"Services", description:"", link:"https://www.stirling.gov.uk/schools-and-learning/nursery-and-childcare/nurseries-in-stirling/nursery-schools/killin-nursery/" },
+    { name:"Heartland Vet", category:"Services", description:"", link:"https://www.heartlandvets.co.uk/services/small-animal" },
+    { name:"Falls of Dochart Retirement Home", category:"Services", description:"", link:"https://www.carehome.co.uk/carehome.cfm/searchazref/10006014FALA" },
+    { name:"Post Office", category:"Services", description:"", link:"https://www.facebook.com/MacGregorsShop/?locale=en_GB" },
+    { name:"Killin Library", category:"Services", description:"", link:"https://www.stirling.gov.uk/community-life-and-leisure/libraries-and-archives/libraries/libraries-in-stirling/list-of-libraries/killin-library/" },
+    { name:"Stirling District Citizens Advice Bureau", category:"Services", description:"", link:"https://www.stirlingcab.org.uk" },
+    { name:"Scottish Mountain Weather Forecast", category:"Services", description:"", link:"https://www.mwis.org.uk/forecasts/scottish" },
+    { name:"Killin Mountain Rescue Team", category:"Services", description:"", link:"https://www.killinmountainrescue.scot/" },
+    { name:"Stirling Council", category:"Services", description:"", link:"https://www.stirling.gov.uk/" },
+
+    { name:"Kinnell Stone Circle", category:"Heritage", description:"", link:"https://sobt.co.uk/kinnell-stone-circle/" },
+    { name:"Moirlanich Longhouse", category:"Heritage", description:"", link:"https://www.nts.org.uk/visit/places/moirlanich-longhouse" },
+    { name:"Finlarig Castle", category:"Heritage", description:"", link:"https://www.undiscoveredscotland.co.uk/killin/finlarigcastle/index.html" },
+    { name:"The Scottish Crannog Centre", category:"Heritage", description:"", link:"https://crannog.co.uk/" },
+    { name:"Killin Heritage Trail", category:"Heritage", description:"", link:"https://www.lochlomond-trossachs.org/discover-the-park/our-heritage-culture/heritage-walks/killin-heritage-trail/" },
+
+    { name:"Killin Games", category:"Events", description:"", link:"https://killingames.co.uk/" },
+    { name:"Killin Agricultural Show", category:"Events", description:"", link:"https://www.facebook.com/killinagricultural.show.3/?locale=en_GB" },
+    { name:"Killin Music Festival", category:"Events", description:"", link:"https://killinmusicfest.com/" },
+    { name:"Great Kindrochit Quadrathlon", category:"Events", description:"", link:"https://davidfoxpitt.com/great-kindrochit-quadrathlon/" },
+    { name:"Killin 10K & 5K", category:"Events", description:"", link:"https://tayfitness.com/events/killin-10k-5k/" },
+
+    { name:"Killin Community Bus", category:"Transport", description:"", link:"https://www.facebook.com/profile.php?id=100091949041441" },
+    { name:"Killin and District Volunteer Car Scheme", category:"Transport", description:"", link:"https://www.killinanddisctrictvolunteercarscheme.com/" },
+    { name:"Killin and Ardeonaig Taxis", category:"Transport", description:"", link:"https://www.facebook.com/p/Killin-Ardeonaig-Taxis-100062958445343/" },
+    { name:"Saltire Private Hire", category:"Transport", description:"", link:"https://saltireprivatehire.uk/" },
+    { name:"Killin Taxis", category:"Transport", description:"", link:"https://killintaxis.co.uk/" },
+    { name:"Bus Timetables", category:"Transport", description:"", link:"https://www.stirling.gov.uk/roads-transport-and-parking/public-transport/" },
+
+    { name:"Killin Clay Club", category:"Clubs", description:"", link:"https://www.killin.org.uk/" },
+    { name:"Killin Breadalbane Angling Club", category:"Clubs", description:"", link:"https://kbac.fish/" },
+    { name:"Killin Golf Club", category:"Clubs", description:"", link:"https://www.killingolfclub.co.uk/" },
+    { name:"Walk in the Park", category:"Clubs", description:"", link:"https://www.pathsforall.org.uk/walking-for-health/health-walks/health-walk/walk-in-the-park-killin" },
+    { name:"Killin Youth Group", category:"Clubs", description:"", link:"https://www.facebook.com/p/Killin-Youth-Group-100066518228622/" },
+    { name:"Killin Drama Club", category:"Clubs", description:"", link:"https://www.facebook.com/KillinDramaClub/?locale=en_GB" },
+    { name:"Killin Community Choir", category:"Clubs", description:"", link:"https://www.facebook.com/killincommunitychoir/?locale=en_GB" }
+  ];
+
+  const CATEGORY_STYLES = {
+    "Accommodation":       { bg:"#EDE7F3", fg:"#7C6A93" },
+    "Things to Do":        { bg:"#E7EEE3", fg:"#4F6650" },
+    "Eating Out":          { bg:"#F7ECD9", fg:"#B07A1F" },
+    "Shopping":            { bg:"#E6E9F0", fg:"#3D4F7A" },
+    "Walking & Cycling":   { bg:"#E3EDF1", fg:"#1F3A4D" },
+    "Services":            { bg:"#EFEBE3", fg:"#5B5646" },
+    "Heritage":            { bg:"#F3E3E1", fg:"#95463B" },
+    "Events":              { bg:"#FCE9D6", fg:"#B0631F" },
+    "Transport":           { bg:"#DCEBEA", fg:"#2E6B63" },
+    "Clubs":               { bg:"#F0E6EC", fg:"#8A3E63" }
+  };
+
+  let activeCategory = "All";
+  let searchTerm = "";
+
+  const chipsEl = document.getElementById('chips');
+  const gridEl = document.getElementById('grid');
+  const emptyEl = document.getElementById('emptyState');
+  const countEl = document.getElementById('countLabel');
+  const searchInput = document.getElementById('searchInput');
+
+  function renderChips(){
+    const all = ["All", ...CATEGORIES];
+    chipsEl.innerHTML = all.map(cat => {
+      const active = cat === activeCategory ? "active" : "";
+      return `<button class="chip ${active}" data-cat="${cat}">${cat}</button>`;
+    }).join("");
+    chipsEl.querySelectorAll('.chip').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        activeCategory = btn.dataset.cat;
+        renderChips();
+        renderGrid();
+      });
+    });
+  }
+
+  function matches(entry){
+    const inCategory = activeCategory === "All" || entry.category === activeCategory;
+    const term = searchTerm.trim().toLowerCase();
+    const inSearch = !term ||
+      entry.name.toLowerCase().includes(term) ||
+      entry.description.toLowerCase().includes(term) ||
+      entry.category.toLowerCase().includes(term);
+    return inCategory && inSearch;
+  }
+
+  function renderGrid(){
+    const filtered = ENTRIES.filter(matches);
+    countEl.textContent = `${filtered.length} ${filtered.length === 1 ? 'listing' : 'listings'}${activeCategory !== 'All' ? ' in ' + activeCategory : ''}`;
+
+    if(filtered.length === 0){
+      gridEl.style.display = "none";
+      emptyEl.style.display = "block";
+      return;
+    }
+    gridEl.style.display = "grid";
+    emptyEl.style.display = "none";
+
+    gridEl.innerHTML = filtered.map(entry=>{
+      const style = CATEGORY_STYLES[entry.category] || {bg:"#eee", fg:"#333"};
+      const dateLine = entry.date ? `<div class="date-tag">${entry.date}</div>` : "";
+      const descLine = entry.description ? `<p>${entry.description}</p>` : `<p style="flex-grow:1;"></p>`;
+      return `
+        <div class="card">
+          <div class="card-top">
+            <h3>${entry.name}</h3>
+            <span class="badge" style="background:${style.bg}; color:${style.fg};">${entry.category}</span>
+          </div>
+          ${dateLine}
+          ${descLine}
+          <a class="visit" href="${entry.link}" target="_blank" rel="noopener noreferrer">Visit &rarr;</a>
+        </div>
+      `;
+    }).join("");
+  }
+
+  searchInput.addEventListener('input', (e)=>{
+    searchTerm = e.target.value;
+    renderGrid();
+  });
+
+  renderChips();
+  renderGrid();
+</script>
+
+</body>
+</html>
