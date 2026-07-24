@@ -4,6 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Killin Directory</title>
+
+<!--
+  ANALYTICS (optional, privacy-friendly, no cookies/consent banner needed):
+  1. Go to https://www.goatcounter.com and sign up free (takes ~1 minute, no card needed)
+  2. Choose a site code, e.g. "discover-killin" — this makes your dashboard
+     https://discover-killin.goatcounter.com
+  3. Replace YOUR-CODE below with that site code, then remove this comment block
+  4. Uncomment the <script> line below (delete the <!-- and --> around it)
+-->
+<!-- <script data-goatcounter="https://YOUR-CODE.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script> -->
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap');
 
@@ -141,6 +151,86 @@
     color:var(--ink-soft);
   }
 
+  /* ---------- Featured strip ---------- */
+  .featured-wrap{
+    max-width:960px;
+    margin:0 auto;
+    padding:28px 24px 0;
+  }
+  .featured-heading{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:15px;
+    letter-spacing:.03em;
+    color:var(--loch-deep);
+    margin:0 0 12px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .featured-heading::before{
+    content:"";
+    width:8px; height:8px;
+    border-radius:50%;
+    background:var(--gorse);
+    display:inline-block;
+  }
+  .featured-row{
+    display:flex;
+    gap:14px;
+    overflow-x:auto;
+    padding-bottom:6px;
+    scrollbar-width:thin;
+  }
+  .featured-card{
+    flex:0 0 260px;
+    background:var(--loch-deep);
+    color:#fff;
+    border-radius:6px;
+    overflow:hidden;
+    text-decoration:none;
+    display:flex;
+    flex-direction:column;
+  }
+  .featured-card img{
+    width:100%;
+    height:120px;
+    object-fit:cover;
+    display:block;
+  }
+  .featured-card .fc-body{
+    padding:14px 16px 16px;
+  }
+  .featured-card .fc-badge{
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--gorse);
+  }
+  .featured-card h4{
+    font-family:'Fraunces', serif;
+    font-size:16px;
+    font-weight:600;
+    margin:5px 0 6px;
+    color:#fff;
+  }
+  .featured-card p{
+    font-size:12.5px;
+    color:#D6DEE3;
+    line-height:1.4;
+    margin:0;
+  }
+
+  /* ---------- Card photo (optional) ---------- */
+  .card-photo{
+    width:calc(100% + 40px);
+    margin:-20px -20px 0;
+    height:130px;
+    object-fit:cover;
+    display:block;
+  }
+
   /* ---------- Grid ---------- */
   main{
     max-width:960px;
@@ -268,6 +358,12 @@
 <div class="chips-wrap">
   <div class="chips" id="chips"></div>
 </div>
+
+<div class="featured-wrap" id="featuredWrap" style="display:none;">
+  <div class="featured-heading">Featured this month</div>
+  <div class="featured-row" id="featuredRow"></div>
+</div>
+
 <div class="count-label" id="countLabel"></div>
 
 <main>
@@ -279,7 +375,7 @@
 </main>
 
 <footer>
-  To add, edit, or remove a listing, update the <code>ENTRIES</code> array near the top of the script (name, category, description, and URL). Search, filtering, and layout update automatically.
+  To add, edit, or remove a listing, update the <code>ENTRIES</code> array near the top of the script (name, category, description, and URL). Add <code>featured:true</code> to highlight something in the strip above, or <code>image:"photo.jpg"</code> (after uploading a photo to the repo) to show a picture on a listing or in the featured strip. Search, filtering, and layout update automatically.
 </footer>
 
 <script>
@@ -370,9 +466,9 @@
     { name:"The Scottish Crannog Centre", category:"Heritage", description:"", link:"https://crannog.co.uk/" },
     { name:"Killin Heritage Trail", category:"Heritage", description:"", link:"https://www.lochlomond-trossachs.org/discover-the-park/our-heritage-culture/heritage-walks/killin-heritage-trail/" },
 
-    { name:"Killin Games", category:"Events", description:"", link:"https://killingames.co.uk/" },
+    { name:"Killin Games", category:"Events", description:"", link:"https://killingames.co.uk/", featured:true },
     { name:"Killin Agricultural Show", category:"Events", description:"", link:"https://www.facebook.com/killinagricultural.show.3/?locale=en_GB" },
-    { name:"Killin Music Festival", category:"Events", description:"", link:"https://killinmusicfest.com/" },
+    { name:"Killin Music Festival", category:"Events", description:"", link:"https://killinmusicfest.com/", featured:true },
     { name:"Great Kindrochit Quadrathlon", category:"Events", description:"", link:"https://davidfoxpitt.com/great-kindrochit-quadrathlon/" },
     { name:"Killin 10K & 5K", category:"Events", description:"", link:"https://tayfitness.com/events/killin-10k-5k/" },
 
@@ -413,6 +509,33 @@
   const emptyEl = document.getElementById('emptyState');
   const countEl = document.getElementById('countLabel');
   const searchInput = document.getElementById('searchInput');
+  const featuredWrapEl = document.getElementById('featuredWrap');
+  const featuredRowEl = document.getElementById('featuredRow');
+
+  function renderFeatured(){
+    // Shows any entry with "featured:true". Add/remove that flag on
+    // entries in ENTRIES above to control what appears here — no limit
+    // on how many, and it works with or without an "image" field.
+    const featured = ENTRIES.filter(e => e.featured);
+    if(featured.length === 0){
+      featuredWrapEl.style.display = "none";
+      return;
+    }
+    featuredWrapEl.style.display = "block";
+    featuredRowEl.innerHTML = featured.map(entry=>{
+      const img = entry.image ? `<img src="${entry.image}" alt="${entry.name}">` : "";
+      return `
+        <a class="featured-card" href="${entry.link}" target="_blank" rel="noopener noreferrer">
+          ${img}
+          <div class="fc-body">
+            <div class="fc-badge">${entry.category}</div>
+            <h4>${entry.name}</h4>
+            <p>${entry.description || ""}</p>
+          </div>
+        </a>
+      `;
+    }).join("");
+  }
 
   function renderChips(){
     const all = ["All", ...CATEGORIES];
@@ -455,8 +578,10 @@
       const style = CATEGORY_STYLES[entry.category] || {bg:"#eee", fg:"#333"};
       const dateLine = entry.date ? `<div class="date-tag">${entry.date}</div>` : "";
       const descLine = entry.description ? `<p>${entry.description}</p>` : `<p style="flex-grow:1;"></p>`;
+      const photo = entry.image ? `<img class="card-photo" src="${entry.image}" alt="${entry.name}">` : "";
       return `
         <div class="card">
+          ${photo}
           <div class="card-top">
             <h3>${entry.name}</h3>
             <span class="badge" style="background:${style.bg}; color:${style.fg};">${entry.category}</span>
@@ -474,6 +599,7 @@
     renderGrid();
   });
 
+  renderFeatured();
   renderChips();
   renderGrid();
 </script>
